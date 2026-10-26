@@ -34,7 +34,7 @@ DES Project/
 │   │   ├── des_pc2.v
 │   │   ├── des_key_schedule.v
 │   │   └── README.md
-│   ├── marc/                              # S-Boxes & Round function F
+│   ├── marcelino/                              # S-Boxes & Round function F
 │   │   ├── des_sbox_1.v ... des_sbox_8.v
 │   │   ├── des_sboxes_all.v
 │   │   ├── des_round_function_f.v
@@ -52,7 +52,7 @@ DES Project/
 ├── c_version/                             # Complete ANSI C implementation
 │   ├── zeyad/                             # des_permutation.h / .c & README.md
 │   ├── lotfy/                             # des_key_schedule.h / .c & README.md
-│   ├── marc/                              # des_round_function.h / .c & README.md
+│   ├── marcelino/                              # des_round_function.h / .c & README.md
 │   ├── saeed/                             # des_core.h / .c & README.md
 │   └── mohamed/                           # main.c, test_des.c & README.md
 │
