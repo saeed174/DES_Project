@@ -12,7 +12,7 @@ The architecture is partitioned into five distinct layers, each owned by one tea
 | :--- | :--- | :--- |
 | **Zeyad** | **Permutation Layer** | Initial Permutation ($IP$), Inverse Initial Permutation ($IP^{-1}$), Expansion ($E$), and Permutation ($P$). |
 | **Lotfy** | **Key Schedule** | Permuted Choice 1 (PC-1), 28-bit circular left shifts, Permuted Choice 2 (PC-2), and 16 round subkeys generation ($K_1 \dots K_{16}$). |
-| **Marc** | **S-Boxes & Round Function $F$** | Eight non-linear substitution boxes ($S_1 \dots S_8$), row/column extraction, parallel 48-to-32 bit substitution, and $F(R, K)$ integration. |
+| **Marcelino** | **S-Boxes & Round Function $F$** | Eight non-linear substitution boxes ($S_1 \dots S_8$), row/column extraction, parallel 48-to-32 bit substitution, and $F(R, K)$ integration. |
 | **Saeed** | **DES Core & Feistel Network** | 16-round Feistel network data path, subkey inversion for decryption, pre-output block swap $\{R_{16}, L_{16}\}$, and top-level integration. |
 | **Mohamed** | **I/O, CLI & System Testbench** | Binary file I/O (preserving `0x00`), ECB multi-block iteration, CLI argument parsing, automated QuestaSim simulation script (`run.do`), and comprehensive test suites. |
 
