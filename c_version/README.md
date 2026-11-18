@@ -1,9 +1,9 @@
 # DES C Implementation — Build & Run Guide
 
 This folder contains the **C implementation** of the Data Encryption Standard (DES, FIPS PUB 46-3), including:
-- Modular DES library components (`zeyad/`, `lotfy/`, `marc/`, `saeed/`)
-- A binary-safe ECB file encryption/decryption CLI (`mohamed/main.c`)
-- An automated verification suite (`mohamed/test_des.c`)
+- Modular DES library components (`permutation/`, `key_schedule/`, `round_function/`, `des_core/`)
+- A binary-safe ECB file encryption/decryption CLI (`cli_and_tests/main.c`)
+- An automated verification suite (`cli_and_tests/test_des.c`)
 - Pre-built Windows executables (`des_cli.exe`, `test_des_c.exe`)
 - Test keys and plaintext vectors (`tests/`)
 
@@ -17,7 +17,7 @@ Open a terminal and navigate into the **`c_version/`** directory inside the repo
 cd DES_Project/c_version
 ```
 
-> **Note:** All relative file paths in the commands below (such as `zeyad/*.c` and `tests/keys/...`) assume your working directory is **`c_version/`**.
+> **Note:** All relative file paths in the commands below (such as `permutation/*.c` and `tests/keys/...`) assume your working directory is **`c_version/`**.
 > If you are in the repository root (`DES_Project/`), either `cd c_version` first or prefix the paths with `c_version/`.
 
 ---
@@ -28,23 +28,23 @@ cd DES_Project/c_version
 c_version/
 ├── des_cli.exe                  # Pre-built Windows CLI executable
 ├── test_des_c.exe               # Pre-built Windows verification suite executable
-├── zeyad/                       # Permutation layer (IP, IP^-1, E, P)
+├── permutation/                 # Permutation layer (IP, IP^-1, E, P) — Zeyad
 │   ├── des_permutation.h
 │   ├── des_permutation.c
 │   └── README.md
-├── lotfy/                       # Key schedule (PC-1, circular shifts, PC-2)
+├── key_schedule/                # Key schedule (PC-1, circular shifts, PC-2) — Lotfy
 │   ├── des_key_schedule.h
 │   ├── des_key_schedule.c
 │   └── README.md
-├── marc/                        # S-Boxes (S1..S8) & Round Function F(R, K)
+├── round_function/              # S-Boxes (S1..S8) & Round Function F(R, K) — Marcelino (Marc)
 │   ├── des_round_function.h
 │   ├── des_round_function.c
 │   └── README.md
-├── saeed/                       # 16-round Feistel DES core (encrypt/decrypt block)
+├── des_core/                    # 16-round Feistel DES core — Saeed
 │   ├── des_core.h
 │   ├── des_core.c
 │   └── README.md
-├── mohamed/                     # CLI application & verification test suite
+├── cli_and_tests/               # CLI application & verification test suite — Mohamed
 │   ├── main.c
 │   ├── test_des.c
 │   └── README.md
@@ -88,19 +88,19 @@ If you are on Windows and have not modified the C source files, you can run the 
 ### Prerequisites
 - A C99-compatible compiler such as **GCC** (MinGW-w64 on Windows, GCC on Linux/macOS) or **Clang**.
 
-### 1. Build & Run the Verification Suite (`mohamed/test_des.c`)
+### 1. Build & Run the Verification Suite (`cli_and_tests/test_des.c`)
 
 From **`c_version/`**:
 
 **Windows (PowerShell / Command Prompt):**
 ```powershell
-gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/test_des.c -o test_des_c.exe
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/test_des.c -o test_des_c.exe
 .\test_des_c.exe
 ```
 
 **Linux / macOS / Git Bash:**
 ```bash
-gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/test_des.c -o test_des_c
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/test_des.c -o test_des_c
 ./test_des_c
 ```
 
@@ -112,18 +112,18 @@ gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/test_des.c 
 
 ---
 
-### 2. Build the File Encryption/Decryption CLI (`mohamed/main.c`)
+### 2. Build the File Encryption/Decryption CLI (`cli_and_tests/main.c`)
 
 From **`c_version/`**:
 
 **Windows (PowerShell / Command Prompt):**
 ```powershell
-gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/main.c -o des_cli.exe
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli.exe
 ```
 
 **Linux / macOS / Git Bash:**
 ```bash
-gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/main.c -o des_cli
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli
 ```
 
 ---
@@ -170,11 +170,11 @@ See [`tests/README.md`](./tests/README.md) for the full 12-vector test matrix us
 
 ## 🧩 Integrating Into Your Own C Code
 
-Include [`saeed/des_core.h`](./saeed/des_core.h) to call single-block encryption/decryption directly:
+Include [`des_core/des_core.h`](./des_core/des_core.h) to call single-block encryption/decryption directly:
 ```c
-#include "saeed/des_core.h"
+#include "des_core/des_core.h"
 
 uint64_t ct = des_encrypt_block(plaintext_block, key);
 uint64_t pt = des_decrypt_block(ct, key);
 ```
-Compile your source file together with `zeyad/*.c`, `lotfy/*.c`, `marc/*.c`, and `saeed/*.c`.
+Compile your source file together with `permutation/*.c`, `key_schedule/*.c`, `round_function/*.c`, and `des_core/*.c`.

@@ -1,6 +1,6 @@
 # DES C-Version Test Key & Plaintext Files
 
-All test key and plaintext files use the `.txt` extension for exercising `mohamed/main.c` (`des_cli`) across 16-char hex keys, 8-char ASCII keys, binary-safe file I/O, Known-Answer Tests (KATs), DES algebraic properties, and multi-block ECB behavior.
+All test key and plaintext files use the `.txt` extension for exercising `cli_and_tests/main.c` (`des_cli`) across 16-char hex keys, 8-char ASCII keys, binary-safe file I/O, Known-Answer Tests (KATs), DES algebraic properties, and multi-block ECB behavior.
 
 ## Key Files (`tests/keys/`)
 
@@ -57,7 +57,7 @@ All key files are plain ASCII `.txt` files:
 
 ```cmd
 # Build CLI
-gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/main.c -o des_cli.exe
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli.exe
 
 # Encrypt & decrypt
 .\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.txt

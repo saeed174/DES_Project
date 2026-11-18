@@ -21,40 +21,42 @@ The architecture is partitioned into five distinct layers, each owned by one tea
 ## 📁 Repository Structure
 
 ```
-DES Project/
+DES_Project/
 ├── Verilog_version/                       # Complete RTL implementation
-│   ├── zeyad/                             # IP, IP^-1, E, P permutation modules
+│   ├── permutation/                       # IP, IP^-1, E, P permutation modules (Zeyad)
 │   │   ├── des_initial_permutation.v
 │   │   ├── des_inverse_initial_permutation.v
 │   │   ├── des_expansion_permutation.v
 │   │   ├── des_p_permutation.v
 │   │   └── README.md
-│   ├── lotfy/                             # Key schedule modules
+│   ├── key_schedule/                      # Key schedule modules (Lotfy)
 │   │   ├── des_pc1.v
 │   │   ├── des_pc2.v
 │   │   ├── des_key_schedule.v
 │   │   └── README.md
-│   ├── marcelino/                              # S-Boxes & Round function F
+│   ├── round_function/                    # S-Boxes & Round function F (Marcelino / Marc)
 │   │   ├── des_sbox_1.v ... des_sbox_8.v
 │   │   ├── des_sboxes_all.v
 │   │   ├── des_round_function_f.v
 │   │   └── README.md
-│   ├── saeed/                             # Feistel rounds & Core assembly
+│   ├── des_core/                          # Feistel rounds & Core assembly (Saeed)
 │   │   ├── des_feistel_round.v
 │   │   ├── des_core.v
 │   │   └── README.md
-│   ├── mohamed/                           # System testbenches
+│   ├── testbenches/                       # System testbenches (Mohamed)
 │   │   ├── tb_des.v
 │   │   ├── tb_des_comprehensive.v
 │   │   └── README.md
-│   └── run.do                             # Automated QuestaSim/ModelSim run script
+│   └── README.md                          # Verilog build & simulation guide
 │
 ├── c_version/                             # Complete ANSI C implementation
-│   ├── zeyad/                             # des_permutation.h / .c & README.md
-│   ├── lotfy/                             # des_key_schedule.h / .c & README.md
-│   ├── marcelino/                              # des_round_function.h / .c & README.md
-│   ├── saeed/                             # des_core.h / .c & README.md
-│   └── mohamed/                           # main.c, test_des.c & README.md
+│   ├── permutation/                       # des_permutation.h / .c & README.md (Zeyad)
+│   ├── key_schedule/                      # des_key_schedule.h / .c & README.md (Lotfy)
+│   ├── round_function/                    # des_round_function.h / .c & README.md (Marcelino / Marc)
+│   ├── des_core/                          # des_core.h / .c & README.md (Saeed)
+│   ├── cli_and_tests/                     # main.c, test_des.c & README.md (Mohamed)
+│   ├── tests/                             # Test key/plaintext vectors & README.md
+│   └── README.md                          # C build & CLI usage guide
 │
 └── README.md                              # This file
 ```
@@ -65,36 +67,32 @@ DES Project/
 
 ### 1. Running the Verilog Simulation (QuestaSim / ModelSim)
 
-Open QuestaSim or ModelSim in the `Verilog_version/` directory:
+Open QuestaSim or ModelSim in the `Verilog_version/` directory (see [`Verilog_version/README.md`](./Verilog_version/README.md) for full GUI and Icarus Verilog options):
 
-#### Option A: Inside QuestaSim GUI
-```tcl
-cd Verilog_version
-do run.do
-```
-*The `run.do` script automatically compiles all modules in dependency order, elaborates the design with full visibility (`+acc`), groups and formats waveforms (Inputs, Output, Internal Datapath, Pass/Fail counters), runs all 130 tests, and zooms to fit.*
-
-#### Option B: From Command Line / Terminal
 ```bash
 cd Verilog_version
-vsim -c -do "do run.do; quit -f"
+vlib work
+vlog -sv permutation/*.v key_schedule/*.v round_function/*.v des_core/*.v testbenches/tb_des.v testbenches/tb_des_comprehensive.v
+vsim -c work.tb_des_comprehensive -do "run -all; quit -f"
 ```
 
 ---
 
 ### 2. Building and Running the C Version
 
-Ensure GCC is available on your system.
+Ensure GCC is available on your system (or see [`c_version/README.md`](./c_version/README.md) for pre-built Windows executables and details).
 
 #### Running the Comprehensive C Test Suite:
 ```bash
-gcc -O3 -Wall -Wextra c_version/zeyad/*.c c_version/lotfy/*.c c_version/marc/*.c c_version/saeed/*.c c_version/mohamed/test_des.c -o test_des_c.exe
+cd c_version
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/test_des.c -o test_des_c.exe
 ./test_des_c.exe
 ```
 
 #### Building the Binary File Encryption/Decryption CLI:
 ```bash
-gcc -O3 -Wall -Wextra c_version/zeyad/*.c c_version/lotfy/*.c c_version/marc/*.c c_version/saeed/*.c c_version/mohamed/main.c -o des_cli.exe
+cd c_version
+gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli.exe
 ```
 
 #### Using the CLI (Assignment Format):

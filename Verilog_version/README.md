@@ -1,9 +1,9 @@
 # DES Verilog RTL Implementation — Simulation & Usage Guide
 
 This folder contains the **Verilog RTL implementation** of the Data Encryption Standard (DES, FIPS PUB 46-3), including:
-- Purely combinational 16-round DES core (`saeed/des_core.v`)
-- Modular submodules (`zeyad/`, `lotfy/`, `marcelino/`, `saeed/`)
-- Basic and comprehensive verification testbenches (`mohamed/tb_des.v`, `mohamed/tb_des_comprehensive.v`)
+- Purely combinational 16-round DES core (`des_core/des_core.v`)
+- Modular submodules (`permutation/`, `key_schedule/`, `round_function/`, `des_core/`)
+- Basic and comprehensive verification testbenches (`testbenches/tb_des.v`, `testbenches/tb_des_comprehensive.v`)
 
 ---
 
@@ -15,8 +15,7 @@ Open a terminal (or the QuestaSim/ModelSim Transcript console) and navigate into
 cd DES_Project/Verilog_version
 ```
 
-> **Note:** All relative paths below (`zeyad/*.v`, `lotfy/*.v`, `marcelino/*.v`, `saeed/*.v`, `mohamed/...`) assume your working directory is **`Verilog_version/`**.
-> Although [`mohamed/README.md`](./mohamed/README.md) and the root [`README.md`](../README.md) reference `run.do`, that script is not included in this directory—use the commands below directly.
+> **Note:** All relative paths below (`permutation/*.v`, `key_schedule/*.v`, `round_function/*.v`, `des_core/*.v`, `testbenches/...`) assume your working directory is **`Verilog_version/`**.
 
 ---
 
@@ -24,27 +23,27 @@ cd DES_Project/Verilog_version
 
 ```text
 Verilog_version/
-├── zeyad/                                   # 1. Permutation layer (Verilog-2001)
+├── permutation/                             # 1. Permutation layer (Verilog-2001) — Zeyad
 │   ├── des_initial_permutation.v
 │   ├── des_inverse_initial_permutation.v
 │   ├── des_expansion_permutation.v
 │   ├── des_p_permutation.v
 │   └── README.md
-├── lotfy/                                   # 2. Key schedule (Verilog-2001)
+├── key_schedule/                            # 2. Key schedule (Verilog-2001) — Lotfy
 │   ├── des_pc1.v
 │   ├── des_pc2.v
 │   ├── des_key_schedule.v
 │   └── README.md
-├── marcelino/                               # 3. S-Boxes & Round Function F (Verilog-2001)
+├── round_function/                          # 3. S-Boxes & Round Function F (Verilog-2001) — Marcelino (Marc)
 │   ├── des_sbox_1.v ... des_sbox_8.v
 │   ├── des_sboxes_all.v
 │   ├── des_round_function_f.v
 │   └── README.md
-├── saeed/                                   # 4. Feistel round & Top-level core (Verilog-2001)
+├── des_core/                                # 4. Feistel round & Top-level core (Verilog-2001) — Saeed
 │   ├── des_feistel_round.v
 │   ├── des_core.v                           # Top-level DUT module: des_core
 │   └── README.md
-└── mohamed/                                 # 5. Simulation testbenches
+└── testbenches/                             # 5. Simulation testbenches — Mohamed
     ├── tb_des.v                             # Basic 5-testbench (Verilog-2001)
     ├── tb_des_comprehensive.v               # Full 130-check suite (uses SystemVerilog)
     └── README.md
@@ -58,8 +57,8 @@ Verilog_version/
 - **Alternative (Basic Testbench):** **Icarus Verilog** (`iverilog`, `vvp`) — works out of the box for `tb_des.v` and all RTL modules.
 
 > **Important Compilation Flag Note:**
-> All RTL modules and `mohamed/tb_des.v` are standard **Verilog-2001**.
-> However, `mohamed/tb_des_comprehensive.v` uses SystemVerilog features (`input string test_name` and `$countones(...)`), so compile it with **`-sv`** in QuestaSim/ModelSim (`vlog -sv ...`).
+> All RTL modules and `testbenches/tb_des.v` are standard **Verilog-2001**.
+> However, `testbenches/tb_des_comprehensive.v` uses SystemVerilog features (`input string test_name` and `$countones(...)`), so compile it with **`-sv`** in QuestaSim/ModelSim (`vlog -sv ...`).
 
 ---
 
@@ -72,7 +71,7 @@ From **`Verilog_version/`**:
 1. **Create the `work` library and compile all modules & testbenches:**
    ```bash
    vlib work
-   vlog -sv zeyad/*.v lotfy/*.v marcelino/*.v saeed/*.v mohamed/tb_des.v mohamed/tb_des_comprehensive.v
+   vlog -sv permutation/*.v key_schedule/*.v round_function/*.v des_core/*.v testbenches/tb_des.v testbenches/tb_des_comprehensive.v
    ```
 
 2. **Run the Comprehensive Testbench (130 checks across 5 sections):**
@@ -94,7 +93,7 @@ From **`Verilog_version/`**:
 3. Run the following commands in the **Transcript** window:
    ```tcl
    vlib work
-   vlog -sv zeyad/*.v lotfy/*.v marcelino/*.v saeed/*.v mohamed/tb_des_comprehensive.v
+   vlog -sv permutation/*.v key_schedule/*.v round_function/*.v des_core/*.v testbenches/tb_des_comprehensive.v
    vsim -voptargs="+acc" work.tb_des_comprehensive
    add wave -r /*
    run -all
@@ -110,11 +109,11 @@ From **`Verilog_version/`**:
 From **`Verilog_version/`**, you can run the basic Verilog-2001 testbench (`tb_des.v`) with `iverilog` and `vvp`:
 
 ```bash
-iverilog -o tb_des.vvp zeyad/*.v lotfy/*.v marcelino/*.v saeed/*.v mohamed/tb_des.v
+iverilog -o tb_des.vvp permutation/*.v key_schedule/*.v round_function/*.v des_core/*.v testbenches/tb_des.v
 vvp tb_des.vvp
 ```
 
-> **Note:** `mohamed/tb_des_comprehensive.v` uses SystemVerilog `string` task arguments and `$countones()`, which may not compile or run cleanly depending on your `iverilog` version even with `-g2012`. Use QuestaSim/ModelSim with `vlog -sv` for the comprehensive suite.
+> **Note:** `testbenches/tb_des_comprehensive.v` uses SystemVerilog `string` task arguments and `$countones()`, which may not compile or run cleanly depending on your `iverilog` version even with `-g2012`. Use QuestaSim/ModelSim with `vlog -sv` for the comprehensive suite.
 
 ---
 
@@ -122,14 +121,14 @@ vvp tb_des.vvp
 
 | Testbench | Scope | Checks |
 | :--- | :--- | :--- |
-| **`mohamed/tb_des.v`** | Basic sanity check: $IP^{-1}(IP(X))$ loopback, Assignment KAT encrypt/decrypt, NIST all-zero KAT encrypt/decrypt. | 5 checks |
-| **`mohamed/tb_des_comprehensive.v`** | Section 1: 16 random $IP^{-1}(IP(X))$ checks<br>Section 2: 6 NIST/project KAT vectors (encrypt + decrypt)<br>Section 3: Complementarity $\text{DES}(\sim K, \sim P) = \sim\text{DES}(K, P)$<br>Section 4: 64-bit single-flip Avalanche diffusion check<br>Section 5: 100 random encrypt/decrypt roundtrips | 130 checks |
+| **`testbenches/tb_des.v`** | Basic sanity check: $IP^{-1}(IP(X))$ loopback, Assignment KAT encrypt/decrypt, NIST all-zero KAT encrypt/decrypt. | 5 checks |
+| **`testbenches/tb_des_comprehensive.v`** | Section 1: 16 random $IP^{-1}(IP(X))$ checks<br>Section 2: 6 NIST/project KAT vectors (encrypt + decrypt)<br>Section 3: Complementarity $\text{DES}(\sim K, \sim P) = \sim\text{DES}(K, P)$<br>Section 4: 64-bit single-flip Avalanche diffusion check<br>Section 5: 100 random encrypt/decrypt roundtrips | 130 checks |
 
 ---
 
 ## 🧩 Top-Level Hardware Interface (`des_core`)
 
-To instantiate the DES core in your own RTL design or synthesis flow, use `des_core` in [`saeed/des_core.v`](./saeed/des_core.v) and include all `.v` files under `zeyad/`, `lotfy/`, `marcelino/`, and `saeed/` (excluding `mohamed/` testbenches):
+To instantiate the DES core in your own RTL design or synthesis flow, use `des_core` in [`des_core/des_core.v`](./des_core/des_core.v) and include all `.v` files under `permutation/`, `key_schedule/`, `round_function/`, and `des_core/` (excluding `testbenches/`):
 
 ```verilog
 des_core u_des (
