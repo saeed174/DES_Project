@@ -31,15 +31,20 @@
 
 ---
 
-## How to Build & Run
+## How to Build & Run (from `c_version/`)
 
-### 1. Run the Test Suite:
+### 1. Build & Run the Test Suite:
 ```bash
-gcc -O3 -Wall -Wextra c_version/zeyad/*.c c_version/lotfy/*.c c_version/marc/*.c c_version/saeed/*.c c_version/mohamed/test_des.c -o test_des_c.exe
-./test_des_c.exe
+gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/test_des.c -o test_des_c.exe
+.\test_des_c.exe
 ```
 
-### 2. Build the Official CLI Tool:
+### 2. Build & Run the Official CLI Tool:
 ```bash
-gcc -O3 -Wall -Wextra c_version/zeyad/*.c c_version/lotfy/*.c c_version/marc/*.c c_version/saeed/*.c c_version/mohamed/main.c -o des_cli.exe
+# Build
+gcc -O3 -Wall -Wextra zeyad/*.c lotfy/*.c marc/*.c saeed/*.c mohamed/main.c -o des_cli.exe
+
+# Encrypt & Decrypt (using tests/ .txt files)
+.\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.txt
+.\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.txt decrypted.txt
 ```

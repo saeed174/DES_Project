@@ -1,0 +1,4 @@
+DES ECB Multi-Block Test Msg 01
+Block 05-08: 1234567890ABCDEF!!
+Block 09-12: Binary-safe C DES.
+Block 13-16: End of 128B vector
