@@ -12,6 +12,26 @@
  *   - Marcelino (Marc): S-Boxes (S1..S8) and Round Function F(R, K).
  */
 
+// Build & Run Examples (run from c_version/):
+//   1) Build CLI:
+//      gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli.exe
+//
+//   2) Build & run automated test suite:
+//      gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/test_des.c -o test_des_c.exe
+//      .\test_des_c.exe
+//
+//   3) Test CLI directly - KAT 1 (Key: 133457799BBCDFF1, Expected CT: 85E813540F0AB405):
+//      .\des_cli.exe e tests/keys/key_kat1_hex.txt tests/plaintexts/pt_kat1.txt ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_kat1_hex.txt ciphertext.bin recovered.bin
+//
+//   4) Test CLI directly - KAT 5 ASCII ("Now is t", Expected CT: 3FA40E8A984D4815):
+//      .\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt
+//
+//   5) Test CLI directly - Multi-block ASCII (24 bytes):
+//      .\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_multiblock_ascii.txt ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -91,9 +111,19 @@ int main(int argc, char *argv[]) {
     //   program e key_file plaintext_file ciphertext_file
     //   program d key_file ciphertext_file plaintext_file
     if (argc != 5) {
+#ifdef _WIN32
+        const char *cli_cmd = ".\\des_cli.exe";
+#else
+        const char *cli_cmd = "./des_cli";
+#endif
         fprintf(stderr, "Usage: %s <e|d> <key_file> <input_file> <output_file>\n", argv[0]);
         fprintf(stderr, "  e : Encrypt\n");
-        fprintf(stderr, "  d : Decrypt\n");
+        fprintf(stderr, "  d : Decrypt\n\n");
+        fprintf(stderr, "Examples (run from c_version/):\n");
+        fprintf(stderr, "  %s e tests/keys/key_kat1_hex.txt tests/plaintexts/pt_kat1.txt ciphertext.bin\n", cli_cmd);
+        fprintf(stderr, "  %s d tests/keys/key_kat1_hex.txt ciphertext.bin recovered.bin\n", cli_cmd);
+        fprintf(stderr, "  %s e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.bin\n", cli_cmd);
+        fprintf(stderr, "  %s d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt\n", cli_cmd);
         return 1;
     }
 
