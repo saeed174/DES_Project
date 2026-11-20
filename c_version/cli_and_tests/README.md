@@ -44,7 +44,7 @@ gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_co
 # Build
 gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/main.c -o des_cli.exe
 
-# Encrypt & Decrypt (using tests/ .txt files)
-.\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.txt
-.\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.txt decrypted.txt
+# Encrypt & Decrypt (using tests/ .bin sample files)
+.\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_2.bin ciphertext.bin
+.\des_cli.exe d tests/keys/key_table4_2.bin ciphertext.bin decrypted.bin
 ```

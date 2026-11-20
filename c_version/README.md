@@ -48,9 +48,10 @@ c_version/
 │   ├── main.c
 │   ├── test_des.c
 │   └── README.md
-└── tests/                       # Test keys, plaintexts, and expected ciphertext matrix
+└── tests/                       # Stallings Ch. 4 .bin test samples & expected ciphertexts
     ├── keys/
     ├── plaintexts/
+    ├── ciphertexts/
     └── README.md
 ```
 
@@ -74,11 +75,11 @@ If you are on Windows and have not modified the C source files, you can run the 
 ### 2. Run the Encryption / Decryption CLI
 **PowerShell / Command Prompt (`cmd`):**
 ```powershell
-# Encrypt
-.\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.bin
+# Encrypt Stallings Table 4.2 sample
+.\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_2.bin ciphertext.bin
 
-# Decrypt
-.\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.bin decrypted.txt
+# Decrypt back to recover the original plaintext bytes
+.\des_cli.exe d tests/keys/key_table4_2.bin ciphertext.bin decrypted.bin
 ```
 
 ---
@@ -147,24 +148,24 @@ des_cli <e|d> <key_file> <input_file> <output_file>
 
 ### Examples (Run from `c_version/`)
 
-**Example 1 — Assignment Known-Answer Vector (KAT 1):**
+**Example 1 — Stallings Table 4.2 DES Sample:**
 ```powershell
-# Encrypt tests/plaintexts/pt_kat1.txt (0123456789ABCDEF) with key 133457799BBCDFF1
-.\des_cli.exe e tests/keys/key_kat1_hex.txt tests/plaintexts/pt_kat1.txt kat1_out.bin
+# Encrypt tests/plaintexts/pt_table4_2.bin (02468ACEECA86420) with key 0F1571C947D9E859
+.\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_2.bin out_table4_2.bin
 
 # Decrypt back to recover the original bytes
-.\des_cli.exe d tests/keys/key_kat1_hex.txt kat1_out.bin kat1_recovered.bin
+.\des_cli.exe d tests/keys/key_table4_2.bin out_table4_2.bin recovered_table4_2.bin
 ```
-Expected `kat1_out.bin` bytes (hex): `85 E8 13 54 0F 0A B4 05`.
+Expected `out_table4_2.bin` bytes (hex): `DA 02 CE 3A 89 EC AC 3B` (matching `tests/ciphertexts/ct_table4_2.bin`).
 
-**Example 2 — Readable ASCII Text (KAT 5):**
+**Example 2 — Stallings Table 4.3 Plaintext Avalanche Sample (1-bit flip):**
 ```powershell
-.\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt kat5_out.bin
-.\des_cli.exe d tests/keys/key_ascii_hex_nl.txt kat5_out.bin kat5_recovered.txt
+.\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_3_avalanche.bin out_table4_3.bin
+.\des_cli.exe d tests/keys/key_table4_2.bin out_table4_3.bin recovered_table4_3.bin
 ```
-Expected `kat5_out.bin` bytes (hex): `3F A4 0E 8A 98 4D 48 15`, and `kat5_recovered.txt` contains `Now is t`.
+Expected `out_table4_3.bin` bytes (hex): `05 7C DE 97 D7 68 3F 2A` (`tests/ciphertexts/ct_table4_3_avalanche.bin`).
 
-See [`tests/README.md`](./tests/README.md) for the full 12-vector test matrix using all files in `tests/keys/` and `tests/plaintexts/`.
+See [`tests/README.md`](./tests/README.md) for all Stallings Chapter 4 `.bin` test samples (`tests/keys/`, `tests/plaintexts/`, `tests/ciphertexts/`).
 
 ---
 

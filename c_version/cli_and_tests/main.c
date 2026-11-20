@@ -20,17 +20,17 @@
 //      gcc -O3 -Wall -Wextra permutation/*.c key_schedule/*.c round_function/*.c des_core/*.c cli_and_tests/test_des.c -o test_des_c.exe
 //      .\test_des_c.exe
 //
-//   3) Test CLI directly - KAT 1 (Key: 133457799BBCDFF1, Expected CT: 85E813540F0AB405):
-//      .\des_cli.exe e tests/keys/key_kat1_hex.txt tests/plaintexts/pt_kat1.txt ciphertext.bin
-//      .\des_cli.exe d tests/keys/key_kat1_hex.txt ciphertext.bin recovered.bin
+//   3) Test CLI directly - Stallings Table 4.2 (Key: 0f1571c947d9e859, Expected CT: da02ce3a89ecac3b):
+//      .\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_2.bin ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_table4_2.bin ciphertext.bin recovered.bin
 //
-//   4) Test CLI directly - KAT 5 ASCII ("Now is t", Expected CT: 3FA40E8A984D4815):
-//      .\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.bin
-//      .\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt
+//   4) Test CLI directly - Stallings Table 4.3 Plaintext Avalanche (Expected CT: 057cde97d7683f2a):
+//      .\des_cli.exe e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_3_avalanche.bin ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_table4_2.bin ciphertext.bin recovered.bin
 //
-//   5) Test CLI directly - Multi-block ASCII (24 bytes):
-//      .\des_cli.exe e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_multiblock_ascii.txt ciphertext.bin
-//      .\des_cli.exe d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt
+//   5) Test CLI directly - Stallings Table 4.4 Key Avalanche (Expected CT: ee92b50606b62b0b):
+//      .\des_cli.exe e tests/keys/key_table4_4_avalanche.bin tests/plaintexts/pt_table4_2.bin ciphertext.bin
+//      .\des_cli.exe d tests/keys/key_table4_4_avalanche.bin ciphertext.bin recovered.bin
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,20 +57,21 @@ static int read_key_file(const char *filename, uint64_t *key_out) {
     }
 
     // Check if it is a 16-character hex string
-    int is_hex = 1;
-    for (size_t i = 0; i < 16; i++) {
-        if (!isxdigit(buf[i])) {
-            is_hex = 0;
-            break;
+    if (n == 16 || (n > 16 && (buf[16] == '\n' || buf[16] == '\r' || buf[16] == ' '))) {
+        int is_hex = 1;
+        for (size_t i = 0; i < 16; i++) {
+            if (!isxdigit(buf[i])) {
+                is_hex = 0;
+                break;
+            }
         }
-    }
-
-    if (is_hex && (n == 16 || (n > 16 && (buf[16] == '\n' || buf[16] == '\r' || buf[16] == ' ')))) {
-        char hex_str[17];
-        memcpy(hex_str, buf, 16);
-        hex_str[16] = '\0';
-        *key_out = strtoull(hex_str, NULL, 16);
-        return 0;
+        if (is_hex) {
+            char hex_str[17];
+            memcpy(hex_str, buf, 16);
+            hex_str[16] = '\0';
+            *key_out = strtoull(hex_str, NULL, 16);
+            return 0;
+        }
     }
 
     // Otherwise, treat as 8 raw binary bytes (Big Endian)
@@ -120,10 +121,10 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "  e : Encrypt\n");
         fprintf(stderr, "  d : Decrypt\n\n");
         fprintf(stderr, "Examples (run from c_version/):\n");
-        fprintf(stderr, "  %s e tests/keys/key_kat1_hex.txt tests/plaintexts/pt_kat1.txt ciphertext.bin\n", cli_cmd);
-        fprintf(stderr, "  %s d tests/keys/key_kat1_hex.txt ciphertext.bin recovered.bin\n", cli_cmd);
-        fprintf(stderr, "  %s e tests/keys/key_ascii_hex_nl.txt tests/plaintexts/pt_kat5_ascii.txt ciphertext.bin\n", cli_cmd);
-        fprintf(stderr, "  %s d tests/keys/key_ascii_hex_nl.txt ciphertext.bin recovered.txt\n", cli_cmd);
+        fprintf(stderr, "  %s e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_2.bin out_table4_2.bin\n", cli_cmd);
+        fprintf(stderr, "  %s d tests/keys/key_table4_2.bin out_table4_2.bin recovered_table4_2.bin\n", cli_cmd);
+        fprintf(stderr, "  %s e tests/keys/key_table4_2.bin tests/plaintexts/pt_table4_3_avalanche.bin out_table4_3.bin\n", cli_cmd);
+        fprintf(stderr, "  %s e tests/keys/key_table4_4_avalanche.bin tests/plaintexts/pt_table4_2.bin out_table4_4.bin\n", cli_cmd);
         return 1;
     }
 
